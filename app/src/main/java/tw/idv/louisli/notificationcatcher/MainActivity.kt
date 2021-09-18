@@ -13,6 +13,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        startNotificationListenerService()
+    }
+
+    private fun startNotificationListenerService() {
         if (isListenerStarted()) {
             return
         }
