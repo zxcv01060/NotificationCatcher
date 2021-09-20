@@ -37,6 +37,9 @@ class NotificationCatcherService : NotificationListenerService() {
         if (sbn == null || sbn.notification.extras.containsKey("mParcelledData.dataSize")) {
             return
         }
+        if (sbn.notification.flags and Notification.FLAG_GROUP_SUMMARY != 0) {
+            return
+        }
 
         val extras = sbn.notification.extras
         val title = obtainTitle(extras)
