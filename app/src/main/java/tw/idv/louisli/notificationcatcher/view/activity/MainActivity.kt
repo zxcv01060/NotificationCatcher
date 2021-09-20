@@ -17,6 +17,7 @@ import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.broadcast.ServiceRestartBroadcastReceiver
 import tw.idv.louisli.notificationcatcher.dao.NotificationApplicationDAO
 import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
+import tw.idv.louisli.notificationcatcher.extension.RecyclerViewExtension.setDivider
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationApplicationAdapter
 
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_main)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.setDivider(this, R.attr.colorOnBackground, 2)
         recyclerView.adapter = NotificationApplicationAdapter(
             lifecycleScope,
             notificationHistoryDAO::getNewsCount

@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
+import tw.idv.louisli.notificationcatcher.extension.RecyclerViewExtension.setDivider
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationHistoryAdapter
 
 class NotificationHistoryActivity : AppCompatActivity() {
@@ -26,6 +27,7 @@ class NotificationHistoryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_notification_history)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_notification_history)
+        recyclerView.setDivider(this, R.attr.colorOnBackground, 2)
         recyclerView.layoutManager = LinearLayoutManager(this).apply {
             stackFromEnd = true
         }
