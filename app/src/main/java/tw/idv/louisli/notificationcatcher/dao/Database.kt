@@ -8,7 +8,7 @@ import tw.idv.louisli.notificationcatcher.data.NotificationHistory
 
 @Database(
     entities = [NotificationApplication::class, NotificationHistory::class],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

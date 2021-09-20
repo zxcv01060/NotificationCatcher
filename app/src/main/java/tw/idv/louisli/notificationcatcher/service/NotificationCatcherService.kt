@@ -63,8 +63,8 @@ class NotificationCatcherService : NotificationListenerService() {
             notificationHistoryDAO.save(
                 NotificationHistory(
                     appPackageName = sbn.packageName,
-                    title = title,
-                    content = content,
+                    title = title ?: "(無標題)",
+                    content = content ?: "(無內容)",
                     receiveDate = Date(sbn.postTime)
                 )
             )

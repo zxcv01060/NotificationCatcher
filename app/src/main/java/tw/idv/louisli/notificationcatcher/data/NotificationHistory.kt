@@ -21,8 +21,8 @@ data class NotificationHistory(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
     val appPackageName: String,
-    val title: String?,
-    val content: String?,
+    val title: String,
+    val content: String,
     val receiveDate: Date,
     val readTime: Date? = null
 )
