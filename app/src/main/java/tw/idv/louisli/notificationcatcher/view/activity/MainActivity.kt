@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
@@ -64,7 +65,9 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = NotificationApplicationAdapter().apply {
             lifecycleScope.launch {
-                this@apply.itemList = notificationApplicationDAO.searchAll()
+                notificationApplicationDAO.searchAll().collect {
+                    this@apply.itemList = it
+                }
             }
         }
     }
