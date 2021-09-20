@@ -16,17 +16,9 @@ import tw.idv.louisli.notificationcatcher.data.NotificationApplication
 
 class NotificationApplicationAdapter(
     private val scope: CoroutineScope,
+    flow: Flow<List<NotificationApplication>>,
     private val newsCountSupplier: (appPackageName: String) -> Flow<Long>
-) : RecyclerView.Adapter<NotificationApplicationAdapter.ViewHolder>() {
-    var itemList: List<NotificationApplication> = listOf()
-        set(value) {
-            val originValueLastIndex = field.lastIndex
-            field = value
-            notifyItemRangeInserted(
-                originValueLastIndex + 1,
-                value.size - originValueLastIndex + 1
-            )
-        }
+) : FlowAdapter<NotificationApplication, NotificationApplicationAdapter.ViewHolder>(scope, flow) {
     lateinit var onItemClickListener: (item: NotificationApplication) -> Unit
     private lateinit var context: Context
     private lateinit var inflater: LayoutInflater
@@ -37,8 +29,6 @@ class NotificationApplicationAdapter(
         this.context = recyclerView.context
         this.inflater = LayoutInflater.from(this.context)
     }
-
-    override fun getItemCount(): Int = itemList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(inflater.inflate(R.layout.recycler_item_application, parent, false))

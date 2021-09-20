@@ -5,21 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.data.NotificationHistory
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NotificationHistoryAdapter : RecyclerView.Adapter<NotificationHistoryAdapter.ViewHolder>() {
-    var itemList: List<NotificationHistory> = emptyList()
-        set(value) {
-            val originLastIndex = field.lastIndex
-            field = value
-            notifyItemRangeInserted(
-                originLastIndex + 1,
-                value.size - originLastIndex + 1
-            )
-        }
+class NotificationHistoryAdapter(
+    scope: CoroutineScope,
+    flow: Flow<List<NotificationHistory>>
+) : FlowAdapter<NotificationHistory, NotificationHistoryAdapter.ViewHolder>(scope, flow) {
     private lateinit var inflater: LayoutInflater
     private val dateFormatter: SimpleDateFormat by lazy {
         SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.TAIWAN)
@@ -29,8 +25,6 @@ class NotificationHistoryAdapter : RecyclerView.Adapter<NotificationHistoryAdapt
         super.onAttachedToRecyclerView(recyclerView)
         this.inflater = LayoutInflater.from(recyclerView.context)
     }
-
-    override fun getItemCount(): Int = itemList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(

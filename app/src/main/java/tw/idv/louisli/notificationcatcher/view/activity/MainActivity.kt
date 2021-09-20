@@ -9,9 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.broadcast.ServiceRestartBroadcastReceiver
@@ -72,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setDivider(this, R.attr.colorOnBackground, 2)
         recyclerView.adapter = NotificationApplicationAdapter(
             lifecycleScope,
+            notificationApplicationDAO.searchAll(),
             notificationHistoryDAO::getNewsCount
         ).apply {
             onItemClickListener = {
@@ -81,11 +79,6 @@ class MainActivity : AppCompatActivity() {
                             putExtra(NotificationHistoryActivity.EXTRA_APP_PACKAGE_NAME, it.id)
                         }
                 )
-            }
-            lifecycleScope.launch {
-                notificationApplicationDAO.searchAll()
-                    .distinctUntilChanged()
-                    .collect { this@apply.itemList = it }
             }
         }
     }

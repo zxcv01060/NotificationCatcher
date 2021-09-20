@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
@@ -31,11 +29,9 @@ class NotificationHistoryActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this).apply {
             stackFromEnd = true
         }
-        recyclerView.adapter = NotificationHistoryAdapter().apply {
-            lifecycleScope.launch {
-                historyDAO.searchByAppPackageName(intent.getStringExtra(EXTRA_APP_PACKAGE_NAME)!!)
-                    .collect { this@apply.itemList = it }
-            }
-        }
+        recyclerView.adapter = NotificationHistoryAdapter(
+            lifecycleScope,
+            historyDAO.searchByAppPackageName(intent.getStringExtra(EXTRA_APP_PACKAGE_NAME)!!)
+        )
     }
 }
