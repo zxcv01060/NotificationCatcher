@@ -49,6 +49,8 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <action android:name="tw.idv.louisli.notificationcatcher.broadcast.restart" />
             </intent-filter>
         </receiver>
     </application>

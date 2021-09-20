@@ -1,6 +1,7 @@
 package tw.idv.louisli.notificationcatcher.service
 
 import android.app.Notification
+import android.content.Intent
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -24,6 +25,10 @@ class NotificationCatcherService : NotificationListenerService() {
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private lateinit var notificationApplicationDAO: NotificationApplicationDAO
     private lateinit var notificationHistoryDAO: NotificationHistoryDAO
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
 
     override fun onListenerConnected() {
         IS_STARTED = true

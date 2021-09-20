@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
+import tw.idv.louisli.notificationcatcher.broadcast.ServiceRestartBroadcastReceiver
 import tw.idv.louisli.notificationcatcher.dao.NotificationApplicationDAO
 import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
@@ -77,5 +78,12 @@ class MainActivity : AppCompatActivity() {
                     .collect { this@apply.itemList = it }
             }
         }
+    }
+
+    override fun onDestroy() {
+        val intent = Intent(ServiceRestartBroadcastReceiver.ACTION_RESTART)
+        intent.setClass(this, ServiceRestartBroadcastReceiver::class.java)
+        sendBroadcast(intent)
+        super.onDestroy()
     }
 }
