@@ -43,7 +43,7 @@
         </service>
 
         <receiver
-            android:name=".broadcast.BootBroadcastReceiver"
+            android:name=".broadcast.ServiceRestartBroadcastReceiver"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
 

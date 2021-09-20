@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
 
-class BootBroadcastReceiver : BroadcastReceiver() {
+class ServiceRestartBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action != "android.intent.action.BOOT_COMPLETED") {
             return
