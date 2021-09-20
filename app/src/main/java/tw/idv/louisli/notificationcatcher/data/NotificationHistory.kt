@@ -11,16 +11,16 @@ import java.util.*
         ForeignKey(
             entity = NotificationApplication::class,
             parentColumns = ["id"],
-            childColumns = ["appId"],
+            childColumns = ["appPackageName"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("id", unique = true), Index("appId")]
+    indices = [Index("id", unique = true), Index("appPackageName")]
 )
 data class NotificationHistory(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
-    val appId: Int,
+    val appPackageName: String,
     val title: String?,
     val content: String?,
     val receiveDate: Date,

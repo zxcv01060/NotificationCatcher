@@ -1,6 +1,7 @@
 package tw.idv.louisli.notificationcatcher.service
 
 import android.app.Notification
+import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import kotlinx.coroutines.CoroutineScope
@@ -37,30 +38,23 @@ class NotificationCatcherService : NotificationListenerService() {
             return
         }
 
-        val appInfo = packageManager.getApplicationInfo(sbn.packageName, 0)
         val extras = sbn.notification.extras
+        val title = obtainTitle(extras)
+        val content = obtainContent(extras)
         scope.launch {
             notificationApplicationDAO.save(
                 NotificationApplication(
-                    id = appInfo.uid,
-                    appPackageName = sbn.packageName,
+                    id = sbn.packageName,
                     createDate = Date()
                 )
             )
 
-            val title = extras.getString(
-                Notification.EXTRA_TITLE,
-                extras.getString(Notification.EXTRA_TITLE_BIG)
-            )
-            val content = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
-                ?: extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
-                    ?.joinToString(separator = "\n")
             if (title.isNullOrBlank() && content.isNullOrBlank()) {
                 return@launch
             }
             notificationHistoryDAO.save(
                 NotificationHistory(
-                    appId = appInfo.uid,
+                    appPackageName = sbn.packageName,
                     title = title,
                     content = content,
                     receiveDate = Date(sbn.postTime)
@@ -68,6 +62,16 @@ class NotificationCatcherService : NotificationListenerService() {
             )
         }
     }
+
+    private fun obtainTitle(extras: Bundle): String? = extras.getString(
+        Notification.EXTRA_TITLE,
+        extras.getString(Notification.EXTRA_TITLE_BIG)
+    )
+
+    private fun obtainContent(extras: Bundle): String? =
+        extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
+            ?: extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
+                ?.joinToString(separator = "\n")
 
     override fun onListenerDisconnected() {
         IS_STARTED = false

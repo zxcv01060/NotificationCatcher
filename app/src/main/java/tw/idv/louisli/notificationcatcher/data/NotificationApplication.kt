@@ -7,8 +7,7 @@ import java.util.*
 @Entity
 data class NotificationApplication(
     @PrimaryKey
-    val id: Int,
-    val appPackageName: String,
+    val id: String,
     val createDate: Date,
     val isEnable: Boolean = true
 )

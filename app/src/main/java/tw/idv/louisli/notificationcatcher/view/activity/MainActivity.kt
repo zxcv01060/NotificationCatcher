@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
@@ -66,16 +67,14 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_main)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = NotificationApplicationAdapter().apply {
+        recyclerView.adapter = NotificationApplicationAdapter(
+            lifecycleScope,
+            notificationHistoryDAO::getNewsCount
+        ).apply {
             lifecycleScope.launch {
                 notificationApplicationDAO.searchAll()
-                    .collect { applications ->
-                        this@apply.itemList = applications
-                        applications.forEachIndexed { index, application ->
-                            notificationHistoryDAO.getNewsCount(application.id)
-                                .collect { this@apply.notifyItemChanged(index, it) }
-                        }
-                    }
+                    .distinctUntilChanged()
+                    .collect { this@apply.itemList = it }
             }
         }
     }

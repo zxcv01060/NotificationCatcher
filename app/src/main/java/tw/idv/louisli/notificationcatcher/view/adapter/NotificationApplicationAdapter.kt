@@ -7,18 +7,26 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.data.NotificationApplication
 
-class NotificationApplicationAdapter :
-    RecyclerView.Adapter<NotificationApplicationAdapter.ViewHolder>() {
+class NotificationApplicationAdapter(
+    private val scope: CoroutineScope,
+    private val newsCountSupplier: (appPackageName: String) -> Flow<Long>
+) : RecyclerView.Adapter<NotificationApplicationAdapter.ViewHolder>() {
+    private val suppliedAppPackageNameSet: MutableSet<String> = mutableSetOf()
     var itemList: List<NotificationApplication> = listOf()
         set(value) {
-            notifyItemRangeInserted(
-                itemList.lastIndex + 1,
-                value.size - itemList.size
-            )
+            val originValueLastIndex = field.lastIndex
             field = value
+            notifyItemRangeInserted(
+                originValueLastIndex + 1,
+                value.size - originValueLastIndex + 1
+            )
         }
     private lateinit var context: Context
     private lateinit var inflater: LayoutInflater
@@ -36,30 +44,24 @@ class NotificationApplicationAdapter :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val info = context.packageManager.getApplicationInfo(
-            itemList[position].appPackageName,
-            0
-        )
+        val info = context.packageManager.getApplicationInfo(itemList[position].id, 0)
         holder.imageIcon.setImageDrawable(context.packageManager.getApplicationIcon(info))
         holder.textName.text = context.packageManager.getApplicationLabel(info)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position)
-            return
-        }
-
-        val count = payloads[0] as Long
-        if (count == 0L) {
-            holder.textCount.visibility = View.GONE
-            return
-        }
-        
-        holder.textCount.text = if (count > 999) {
-            "999+"
-        } else {
-            count.toString()
+        if (suppliedAppPackageNameSet.add(itemList[position].id)) {
+            scope.launch {
+                newsCountSupplier(itemList[position].id)
+                    .collect {
+                        if (it == 0L) {
+                            holder.textCount.visibility = View.GONE
+                            return@collect
+                        }
+                        holder.textCount.text = if (it > 999) {
+                            "999+"
+                        } else {
+                            it.toString()
+                        }
+                    }
+            }
         }
     }
 

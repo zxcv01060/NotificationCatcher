@@ -12,6 +12,11 @@ interface NotificationHistoryDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(history: NotificationHistory)
 
-    @Query("SELECT COUNT(*) FROM NotificationHistory WHERE appId = :appId AND readTime IS NULL")
-    fun getNewsCount(appId: Int): Flow<Long>
+    @Query(
+        """
+        SELECT COUNT(*) FROM NotificationHistory
+                WHERE appPackageName = :appPackageName AND readTime IS NULL
+    """
+    )
+    fun getNewsCount(appPackageName: String): Flow<Long>
 }

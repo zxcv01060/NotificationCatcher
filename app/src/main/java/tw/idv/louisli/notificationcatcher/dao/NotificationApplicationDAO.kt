@@ -16,5 +16,5 @@ interface NotificationApplicationDAO {
     fun searchAll(): Flow<List<NotificationApplication>>
 
     @Query("SELECT * FROM NotificationApplication WHERE id = :id")
-    suspend fun getById(id: Int): NotificationApplication
+    suspend fun getById(id: String): NotificationApplication
 }
