@@ -19,4 +19,7 @@ interface NotificationHistoryDAO {
     """
     )
     fun getNewsCount(appPackageName: String): Flow<Long>
+
+    @Query("SELECT * FROM NotificationHistory WHERE appPackageName = :appPackageName")
+    fun searchByAppPackageName(appPackageName: String): Flow<List<NotificationHistory>>
 }

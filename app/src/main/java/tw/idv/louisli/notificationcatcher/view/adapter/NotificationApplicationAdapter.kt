@@ -18,7 +18,6 @@ class NotificationApplicationAdapter(
     private val scope: CoroutineScope,
     private val newsCountSupplier: (appPackageName: String) -> Flow<Long>
 ) : RecyclerView.Adapter<NotificationApplicationAdapter.ViewHolder>() {
-    private val suppliedAppPackageNameSet: MutableSet<String> = mutableSetOf()
     var itemList: List<NotificationApplication> = listOf()
         set(value) {
             val originValueLastIndex = field.lastIndex
@@ -28,8 +27,10 @@ class NotificationApplicationAdapter(
                 value.size - originValueLastIndex + 1
             )
         }
+    lateinit var onItemClickListener: (item: NotificationApplication) -> Unit
     private lateinit var context: Context
     private lateinit var inflater: LayoutInflater
+    private val suppliedAppPackageNameSet: MutableSet<String> = mutableSetOf()
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -63,6 +64,7 @@ class NotificationApplicationAdapter(
                     }
             }
         }
+        holder.itemView.setOnClickListener { onItemClickListener.invoke(itemList[position]) }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

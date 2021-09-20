@@ -72,6 +72,14 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope,
             notificationHistoryDAO::getNewsCount
         ).apply {
+            onItemClickListener = {
+                startActivity(
+                    Intent(this@MainActivity, NotificationHistoryActivity::class.java)
+                        .apply {
+                            putExtra(NotificationHistoryActivity.EXTRA_APP_PACKAGE_NAME, it.id)
+                        }
+                )
+            }
             lifecycleScope.launch {
                 notificationApplicationDAO.searchAll()
                     .distinctUntilChanged()

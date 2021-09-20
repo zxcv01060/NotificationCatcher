@@ -16,7 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NotificationCatcher">
         <activity
-            android:name="tw.idv.louisli.notificationcatcher.view.activity.MainActivity"
+            android:name=".view.activity.NotificationHistoryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".view.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +29,7 @@
         </activity>
 
         <service
-            android:name="tw.idv.louisli.notificationcatcher.service.NotificationCatcherService"
+            android:name=".service.NotificationCatcherService"
             android:exported="false"
             android:label="NotificationCatcherService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
@@ -46,10 +49,8 @@
             android:name=".broadcast.ServiceRestartBroadcastReceiver"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-
                 <action android:name="tw.idv.louisli.notificationcatcher.broadcast.restart" />
             </intent-filter>
         </receiver>
