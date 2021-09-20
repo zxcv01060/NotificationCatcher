@@ -23,5 +23,6 @@ data class NotificationHistory(
     val appId: Int,
     val title: String?,
     val content: String?,
-    val receiveDate: Date
+    val receiveDate: Date,
+    val readTime: Date? = null
 )

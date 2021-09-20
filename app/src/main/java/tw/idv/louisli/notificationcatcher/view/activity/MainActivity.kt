@@ -14,12 +14,15 @@ import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.dao.NotificationApplicationDAO
+import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationApplicationAdapter
 
 class MainActivity : AppCompatActivity() {
     private val notificationApplicationDAO: NotificationApplicationDAO =
         NotificationCatcherApplication.database.notificationApplicationDAO
+    private val notificationHistoryDAO: NotificationHistoryDAO =
+        NotificationCatcherApplication.database.notificationHistoryDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +68,14 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = NotificationApplicationAdapter().apply {
             lifecycleScope.launch {
-                notificationApplicationDAO.searchAll().collect {
-                    this@apply.itemList = it
-                }
+                notificationApplicationDAO.searchAll()
+                    .collect { applications ->
+                        this@apply.itemList = applications
+                        applications.forEachIndexed { index, application ->
+                            notificationHistoryDAO.getNewsCount(application.id)
+                                .collect { this@apply.notifyItemChanged(index, it) }
+                        }
+                    }
             }
         }
     }
