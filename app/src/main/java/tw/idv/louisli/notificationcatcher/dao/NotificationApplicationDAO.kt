@@ -9,7 +9,7 @@ import tw.idv.louisli.notificationcatcher.data.NotificationApplication
 
 @Dao
 interface NotificationApplicationDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun save(application: NotificationApplication)
 
     @Query("SELECT * FROM NotificationApplication WHERE isEnable = 1 ORDER BY createDate")
