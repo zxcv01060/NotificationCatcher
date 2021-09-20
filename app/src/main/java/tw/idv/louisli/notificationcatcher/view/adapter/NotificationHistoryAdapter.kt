@@ -1,6 +1,5 @@
 package tw.idv.louisli.notificationcatcher.view.adapter
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -16,14 +15,8 @@ class NotificationHistoryAdapter(
     scope: CoroutineScope,
     flow: Flow<List<NotificationHistory>>
 ) : FlowAdapter<NotificationHistory, NotificationHistoryAdapter.ViewHolder>(scope, flow) {
-    private lateinit var inflater: LayoutInflater
     private val dateFormatter: SimpleDateFormat by lazy {
         SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.TAIWAN)
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        this.inflater = LayoutInflater.from(recyclerView.context)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

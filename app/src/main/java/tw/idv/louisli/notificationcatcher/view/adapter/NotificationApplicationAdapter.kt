@@ -1,7 +1,5 @@
 package tw.idv.louisli.notificationcatcher.view.adapter
 
-import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -20,15 +18,7 @@ class NotificationApplicationAdapter(
     private val newsCountSupplier: (appPackageName: String) -> Flow<Long>
 ) : FlowAdapter<NotificationApplication, NotificationApplicationAdapter.ViewHolder>(scope, flow) {
     lateinit var onItemClickListener: (item: NotificationApplication) -> Unit
-    private lateinit var context: Context
-    private lateinit var inflater: LayoutInflater
     private val suppliedAppPackageNameSet: MutableSet<String> = mutableSetOf()
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        this.context = recyclerView.context
-        this.inflater = LayoutInflater.from(this.context)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(inflater.inflate(R.layout.recycler_item_application, parent, false))

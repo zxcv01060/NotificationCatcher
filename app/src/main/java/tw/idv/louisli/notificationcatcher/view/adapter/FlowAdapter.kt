@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 abstract class FlowAdapter<I : Any, VH : RecyclerView.ViewHolder>(
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val flow: Flow<List<I>>
-) : RecyclerView.Adapter<VH>() {
+) : AbstractAdapter<VH>() {
     var itemList: List<I> = listOf()
         set(value) {
             val originValueLastIndex = field.lastIndex
