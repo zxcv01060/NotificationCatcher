@@ -11,6 +11,9 @@ interface NotificationApplicationDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(application: NotificationApplication)
 
+    @Query("SELECT * FROM NotificationApplication")
+    suspend fun searchAll(): List<NotificationApplication>
+
     @Query("SELECT * FROM NotificationApplication WHERE id = :id")
     suspend fun getById(id: Int): NotificationApplication
 }

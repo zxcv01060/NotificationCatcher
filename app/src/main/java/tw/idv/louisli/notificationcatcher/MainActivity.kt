@@ -6,14 +6,24 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
+import tw.idv.louisli.notificationcatcher.dao.NotificationApplicationDAO
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
+import tw.idv.louisli.notificationcatcher.view.adapter.NotificationApplicationAdapter
 
 class MainActivity : AppCompatActivity() {
+    private val notificationApplicationDAO: NotificationApplicationDAO =
+        NotificationCatcherApplication.database.notificationApplicationDAO
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         startNotificationListenerService()
+        setupRecyclerView()
     }
 
     private fun startNotificationListenerService() {
@@ -45,5 +55,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun startListener() {
         startService(Intent(this, NotificationCatcherService::class.java))
+    }
+
+    private fun setupRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_main)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = NotificationApplicationAdapter().apply {
+            lifecycleScope.launch {
+                this@apply.itemList = notificationApplicationDAO.searchAll()
+            }
+        }
     }
 }
