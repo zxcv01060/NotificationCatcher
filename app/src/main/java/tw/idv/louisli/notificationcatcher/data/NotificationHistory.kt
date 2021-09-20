@@ -24,5 +24,5 @@ data class NotificationHistory(
     val title: String,
     val content: String,
     val receiveDate: Date,
-    val readTime: Date? = null
+    var readTime: Date? = null
 )

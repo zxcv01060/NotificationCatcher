@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
 import tw.idv.louisli.notificationcatcher.extension.RecyclerViewExtension.setDivider
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationHistoryAdapter
+import java.util.*
 
 class NotificationHistoryActivity : AppCompatActivity() {
     companion object {
@@ -32,6 +35,16 @@ class NotificationHistoryActivity : AppCompatActivity() {
         recyclerView.adapter = NotificationHistoryAdapter(
             lifecycleScope,
             historyDAO.searchByAppPackageName(intent.getStringExtra(EXTRA_APP_PACKAGE_NAME)!!)
+                .onEach { histories ->
+                    lifecycleScope.launch {
+                        val now = Date()
+                        histories.filter { it.readTime == null }
+                            .forEach {
+                                it.readTime = now
+                                historyDAO.update(it)
+                            }
+                    }
+                }
         )
     }
 }
