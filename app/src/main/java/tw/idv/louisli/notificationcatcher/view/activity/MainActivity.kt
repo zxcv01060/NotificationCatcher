@@ -1,4 +1,4 @@
-package tw.idv.louisli.notificationcatcher
+package tw.idv.louisli.notificationcatcher.view.activity
 
 import android.content.ComponentName
 import android.content.Intent
@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
+import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.dao.NotificationApplicationDAO
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationApplicationAdapter
