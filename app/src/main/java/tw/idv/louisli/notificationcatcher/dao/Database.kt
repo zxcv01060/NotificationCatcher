@@ -6,7 +6,11 @@ import androidx.room.TypeConverters
 import tw.idv.louisli.notificationcatcher.data.NotificationApplication
 import tw.idv.louisli.notificationcatcher.data.NotificationHistory
 
-@Database(entities = [NotificationApplication::class, NotificationHistory::class], version = 5)
+@Database(
+    entities = [NotificationApplication::class, NotificationHistory::class],
+    version = 5,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class Database : RoomDatabase() {
     abstract val notificationApplicationDAO: NotificationApplicationDAO
