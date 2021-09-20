@@ -40,7 +40,13 @@ class NotificationCatcherService : NotificationListenerService() {
         val appInfo = packageManager.getApplicationInfo(sbn.packageName, 0)
         val extras = sbn.notification.extras
         scope.launch {
-            notificationApplicationDAO.save(NotificationApplication(appInfo.uid, sbn.packageName))
+            notificationApplicationDAO.save(
+                NotificationApplication(
+                    id = appInfo.uid,
+                    appPackageName = sbn.packageName,
+                    createDate = Date()
+                )
+            )
 
             val title = extras.getString(
                 Notification.EXTRA_TITLE,

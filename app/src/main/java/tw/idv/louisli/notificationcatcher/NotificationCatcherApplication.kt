@@ -16,6 +16,6 @@ class NotificationCatcherApplication : Application() {
             this,
             Database::class.java,
             "notification-catcher.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 }
