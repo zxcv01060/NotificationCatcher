@@ -2,6 +2,7 @@ package tw.idv.louisli.notificationcatcher.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.*
 
@@ -13,7 +14,8 @@ import java.util.*
             childColumns = ["appId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("id", unique = true), Index("appId")]
 )
 data class NotificationHistory(
     @PrimaryKey(autoGenerate = true)
