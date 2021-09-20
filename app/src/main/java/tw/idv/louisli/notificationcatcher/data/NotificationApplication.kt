@@ -9,5 +9,6 @@ data class NotificationApplication(
     @PrimaryKey
     val id: Int,
     val appPackageName: String,
-    val createDate: Date
+    val createDate: Date,
+    val isEnable: Boolean = true
 )
