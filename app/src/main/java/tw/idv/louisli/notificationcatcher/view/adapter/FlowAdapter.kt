@@ -13,12 +13,13 @@ abstract class FlowAdapter<I : Any, VH : RecyclerView.ViewHolder>(
 ) : AbstractAdapter<VH>() {
     var itemList: List<I> = listOf()
         set(value) {
-            val originValueLastIndex = field.lastIndex
+            val removedItemIndexList = (field - value).map { field.indexOf(it) }
             field = value
-            notifyItemRangeInserted(
-                originValueLastIndex + 1,
-                value.size - originValueLastIndex + 1
-            )
+            if (removedItemIndexList.isEmpty()) {
+                notifyItemInserted(value.size)
+            } else {
+                notifyItemRemoved(removedItemIndexList[0])
+            }
         }
 
     init {
