@@ -53,7 +53,8 @@ class NotificationCatcherService : NotificationListenerService() {
             notificationApplicationDAO.save(
                 NotificationApplication(
                     id = sbn.packageName,
-                    createDate = Date()
+                    createDate = Date(),
+                    order = notificationApplicationDAO.countByEnableIsTrue()
                 )
             )
 

@@ -9,5 +9,6 @@ data class NotificationApplication(
     @PrimaryKey
     val id: String,
     val createDate: Date,
-    val isEnable: Boolean = true
+    val isEnable: Boolean = true,
+    var order: Int,
 )

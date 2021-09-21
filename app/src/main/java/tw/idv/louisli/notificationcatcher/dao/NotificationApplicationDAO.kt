@@ -12,7 +12,7 @@ interface NotificationApplicationDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun save(application: NotificationApplication)
 
-    @Query("SELECT * FROM NotificationApplication WHERE isEnable = 1 ORDER BY createDate")
+    @Query("SELECT * FROM NotificationApplication WHERE isEnable = 1 ORDER BY `order`")
     fun searchAll(): Flow<List<NotificationApplication>>
 
     @Query("SELECT * FROM NotificationApplication WHERE id = :id")
