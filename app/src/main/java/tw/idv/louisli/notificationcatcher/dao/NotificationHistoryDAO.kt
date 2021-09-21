@@ -1,6 +1,9 @@
 package tw.idv.louisli.notificationcatcher.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import tw.idv.louisli.notificationcatcher.data.NotificationHistory
 
@@ -20,6 +23,6 @@ interface NotificationHistoryDAO {
     @Query("SELECT * FROM NotificationHistory WHERE appPackageName = :appPackageName")
     fun searchByAppPackageName(appPackageName: String): Flow<List<NotificationHistory>>
 
-    @Update
-    suspend fun update(history: NotificationHistory)
+    @Query("UPDATE NotificationHistory SET readTime = CURRENT_TIMESTAMP WHERE appPackageName = :appPackageName AND readTime IS NULL")
+    suspend fun updateReadTime(appPackageName: String)
 }
