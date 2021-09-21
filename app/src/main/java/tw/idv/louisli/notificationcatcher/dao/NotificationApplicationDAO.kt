@@ -17,4 +17,7 @@ interface NotificationApplicationDAO {
 
     @Query("SELECT * FROM NotificationApplication WHERE id = :id")
     suspend fun getById(id: String): NotificationApplication
+
+    @Query("UPDATE NotificationApplication SET isEnable = 0 WHERE id = :id")
+    suspend fun disable(id: String)
 }

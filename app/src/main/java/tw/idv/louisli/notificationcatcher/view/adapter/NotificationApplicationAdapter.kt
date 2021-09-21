@@ -51,5 +51,9 @@ class NotificationApplicationAdapter(
         val imageIcon: ImageView = itemView.findViewById(R.id.image_application_icon)
         val textName: TextView = itemView.findViewById(R.id.text_application_name)
         val textCount: TextView = itemView.findViewById(R.id.text_application_news_count)
+
+        init {
+            itemView.isLongClickable = true
+        }
     }
 }

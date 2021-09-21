@@ -4,11 +4,15 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.view.ContextMenu
+import android.view.MenuItem
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
 import tw.idv.louisli.notificationcatcher.broadcast.ServiceRestartBroadcastReceiver
@@ -17,12 +21,14 @@ import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
 import tw.idv.louisli.notificationcatcher.extension.RecyclerViewExtension.setDivider
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationApplicationAdapter
+import tw.idv.louisli.notificationcatcher.view.menuinfo.RecyclerViewMenuInfo
 
 class MainActivity : AppCompatActivity() {
     private val notificationApplicationDAO: NotificationApplicationDAO =
         NotificationCatcherApplication.database.notificationApplicationDAO
     private val notificationHistoryDAO: NotificationHistoryDAO =
         NotificationCatcherApplication.database.notificationHistoryDAO
+    private val recyclerView: RecyclerView by lazy { findViewById(R.id.recycler_main) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +70,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_main)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setDivider(this, R.attr.colorOnBackground, 2)
         recyclerView.adapter = NotificationApplicationAdapter(
@@ -81,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+        registerForContextMenu(recyclerView)
     }
 
     override fun onDestroy() {
@@ -88,5 +94,33 @@ class MainActivity : AppCompatActivity() {
         intent.setClass(this, ServiceRestartBroadcastReceiver::class.java)
         sendBroadcast(intent)
         super.onDestroy()
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        val recyclerViewMenuInfo = menuInfo as RecyclerViewMenuInfo
+        val holder = recyclerViewMenuInfo.holder as NotificationApplicationAdapter.ViewHolder
+        menu?.setHeaderTitle(holder.textName.text)
+        menuInflater.inflate(R.menu.notification_application, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.menu_item_notification_application_delete) {
+            val menuInfo = item.menuInfo as RecyclerViewMenuInfo
+            disableApplication(menuInfo.position)
+            true
+        } else {
+            super.onContextItemSelected(item)
+        }
+    }
+
+    private fun disableApplication(position: Int) {
+        lifecycleScope.launch {
+            val adapter = recyclerView.adapter as NotificationApplicationAdapter
+            notificationApplicationDAO.disable(adapter.itemList[position].id)
+        }
     }
 }
