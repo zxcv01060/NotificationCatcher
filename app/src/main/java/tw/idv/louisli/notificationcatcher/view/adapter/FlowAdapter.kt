@@ -14,17 +14,26 @@ abstract class FlowAdapter<I : Any, VH : RecyclerView.ViewHolder>(
     var itemList: List<I> = listOf()
         set(value) {
             val removedItemIndexList = (field - value).map { field.indexOf(it) }
+
             field = value
+            if (!isInitialized) {
+                return
+            }
+            
             if (removedItemIndexList.isEmpty()) {
                 notifyItemInserted(value.size)
             } else {
                 notifyItemRemoved(removedItemIndexList[0])
             }
         }
+    private var isInitialized: Boolean = false
 
     init {
         scope.launch {
-            flow.distinctUntilChanged().collect { itemList = it }
+            flow.distinctUntilChanged().collect {
+                itemList = it
+                isInitialized = true
+            }
         }
     }
 
