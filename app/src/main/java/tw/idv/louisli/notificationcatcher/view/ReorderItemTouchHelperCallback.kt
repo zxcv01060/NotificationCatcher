@@ -10,6 +10,10 @@ class ReorderItemTouchHelperCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN,
     0
 ) {
+    override fun isLongPressDragEnabled(): Boolean {
+        return false
+    }
+
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
