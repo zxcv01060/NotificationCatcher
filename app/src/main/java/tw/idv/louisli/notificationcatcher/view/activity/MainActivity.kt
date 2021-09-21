@@ -77,12 +77,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestPermission() {
         val contract = ActivityResultContracts.StartActivityForResult()
-        val launcher = registerForActivityResult(contract) { startListener() }
+        val launcher = registerForActivityResult(contract) {
+            if (isShouldRequestPermission()) {
+                AlertDialog.Builder(this)
+                    .setCancelable(false)
+                    .setMessage("檢測依然未授予此App通知存取權，請重新啟動此App")
+                    .setPositiveButton("確定") { _, _ -> finishAndRemoveTask() }
+                    .show()
+            }
+        }
         AlertDialog.Builder(this)
             .setCancelable(false)
-            .setMessage("檢測到尚未授予此App通知存取權，點下確定後會自動開啟設定頁面，請找到本App後授予通知存取權，然後再透過返回鍵返回此App即可")
+            .setMessage(
+                "檢測到尚未授予此App通知存取權，" +
+                        "點下確定後會自動開啟設定頁面，" +
+                        "請找到本App後授予通知存取權，" +
+                        "然後再透過返回鍵返回此App即可"
+            )
             .setPositiveButton("確定") { _, _ ->
-                launcher.launch(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                launcher.launch(
+                    Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+                )
             }
             .show()
     }
@@ -134,13 +149,6 @@ class MainActivity : AppCompatActivity() {
         adapter.state = NotificationApplicationAdapter.STATE_REORDER
     }
 
-    override fun onDestroy() {
-        val intent = Intent(ServiceRestartBroadcastReceiver.ACTION_RESTART)
-        intent.setClass(this, ServiceRestartBroadcastReceiver::class.java)
-        sendBroadcast(intent)
-        super.onDestroy()
-    }
-
     override fun onCreateContextMenu(
         menu: ContextMenu?,
         v: View?,
@@ -168,5 +176,12 @@ class MainActivity : AppCompatActivity() {
             notificationApplicationDAO.disable(adapter.itemList[position].application.id)
             adapter.notifyItemRemoved(position)
         }
+    }
+
+    override fun onDestroy() {
+        val intent = Intent(ServiceRestartBroadcastReceiver.ACTION_RESTART)
+        intent.setClass(this, ServiceRestartBroadcastReceiver::class.java)
+        sendBroadcast(intent)
+        super.onDestroy()
     }
 }
