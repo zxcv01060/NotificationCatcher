@@ -8,6 +8,7 @@ import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -77,7 +78,13 @@ class MainActivity : AppCompatActivity() {
     private fun requestPermission() {
         val contract = ActivityResultContracts.StartActivityForResult()
         val launcher = registerForActivityResult(contract) { startListener() }
-        launcher.launch(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+        AlertDialog.Builder(this)
+            .setCancelable(false)
+            .setMessage("檢測到尚未授予此App通知存取權，點下確定後會自動開啟設定頁面，請找到本App後授予通知存取權，然後再透過返回鍵返回此App即可")
+            .setPositiveButton("確定") { _, _ ->
+                launcher.launch(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+            }
+            .show()
     }
 
     private fun startListener() {
