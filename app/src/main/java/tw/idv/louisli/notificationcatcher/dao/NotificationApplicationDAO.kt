@@ -1,9 +1,6 @@
 package tw.idv.louisli.notificationcatcher.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import tw.idv.louisli.notificationcatcher.data.NotificationApplication
 
@@ -20,4 +17,10 @@ interface NotificationApplicationDAO {
 
     @Query("UPDATE NotificationApplication SET isEnable = 0 WHERE id = :id")
     suspend fun disable(id: String)
+
+    @Update
+    suspend fun update(applications: List<NotificationApplication>)
+
+    @Query("SELECT COUNT(*) FROM NotificationApplication WHERE isEnable = 1")
+    suspend fun countByEnableIsTrue(): Int
 }

@@ -10,8 +10,10 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import tw.idv.louisli.notificationcatcher.NotificationCatcherApplication
 import tw.idv.louisli.notificationcatcher.R
@@ -20,6 +22,7 @@ import tw.idv.louisli.notificationcatcher.dao.NotificationApplicationDAO
 import tw.idv.louisli.notificationcatcher.dao.NotificationHistoryDAO
 import tw.idv.louisli.notificationcatcher.extension.RecyclerViewExtension.setDivider
 import tw.idv.louisli.notificationcatcher.service.NotificationCatcherService
+import tw.idv.louisli.notificationcatcher.view.ReorderItemTouchHelperCallback
 import tw.idv.louisli.notificationcatcher.view.adapter.NotificationApplicationAdapter
 import tw.idv.louisli.notificationcatcher.view.menuinfo.RecyclerViewMenuInfo
 
@@ -28,6 +31,17 @@ class MainActivity : AppCompatActivity() {
         NotificationCatcherApplication.database.notificationApplicationDAO
     private val notificationHistoryDAO: NotificationHistoryDAO =
         NotificationCatcherApplication.database.notificationHistoryDAO
+    private var isReorderState = false
+    private val recyclerViewItemTouchHelper by lazy {
+        ItemTouchHelper(ReorderItemTouchHelperCallback(adapter))
+    }
+    private val adapter: NotificationApplicationAdapter = NotificationApplicationAdapter(
+        scope = lifecycleScope,
+        flow = notificationApplicationDAO.searchAll(),
+        newsCountSupplier = notificationHistoryDAO::getNewsCount,
+        reorderListener = { recyclerViewItemTouchHelper.startDrag(it) }
+    )
+
     private val recyclerView: RecyclerView by lazy { findViewById(R.id.recycler_main) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         startNotificationListenerService()
         setupRecyclerView()
+        setupReorderButton()
     }
 
     private fun startNotificationListenerService() {
@@ -72,11 +87,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setDivider(this, R.attr.colorOnBackground, 2)
-        recyclerView.adapter = NotificationApplicationAdapter(
-            lifecycleScope,
-            notificationApplicationDAO.searchAll(),
-            notificationHistoryDAO::getNewsCount
-        ).apply {
+        recyclerView.adapter = adapter.apply {
             onItemClickListener = {
                 startActivity(
                     Intent(this@MainActivity, NotificationHistoryActivity::class.java)
@@ -86,7 +97,34 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+        recyclerViewItemTouchHelper.attachToRecyclerView(recyclerView)
         registerForContextMenu(recyclerView)
+    }
+
+    private fun setupReorderButton() {
+        val buttonReorder = findViewById<FloatingActionButton>(R.id.button_main_reorder)
+        buttonReorder.setOnClickListener {
+            isReorderState = if (isReorderState) {
+                buttonReorder.setImageResource(R.drawable.ic_baseline_reorder_24)
+                saveOrder()
+                false
+            } else {
+                buttonReorder.setImageResource(R.drawable.ic_baseline_check_24)
+                startReorder()
+                true
+            }
+            adapter.notifyItemRangeChanged(0, adapter.itemCount)
+        }
+    }
+
+    private fun saveOrder() = lifecycleScope.launch {
+        adapter.state = NotificationApplicationAdapter.STATE_NEWS_COUNT
+        adapter.itemList.forEachIndexed { index, item -> item.application.order = index }
+        notificationApplicationDAO.update(adapter.itemList.map { it.application })
+    }
+
+    private fun startReorder() {
+        adapter.state = NotificationApplicationAdapter.STATE_REORDER
     }
 
     override fun onDestroy() {
@@ -120,7 +158,8 @@ class MainActivity : AppCompatActivity() {
     private fun disableApplication(position: Int) {
         lifecycleScope.launch {
             val adapter = recyclerView.adapter as NotificationApplicationAdapter
-            notificationApplicationDAO.disable(adapter.itemList[position].id)
+            notificationApplicationDAO.disable(adapter.itemList[position].application.id)
+            adapter.notifyItemRemoved(position)
         }
     }
 }

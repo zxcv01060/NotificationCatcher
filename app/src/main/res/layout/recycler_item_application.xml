@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     tools:context=".view.adapter.NotificationApplicationAdapter">
 
@@ -23,15 +24,33 @@
         android:layout_weight="1"
         tools:text="Line" />
 
-    <TextView
-        android:id="@+id/text_application_news_count"
+    <ViewSwitcher
+        android:id="@+id/switcher_application_count_and_reorder"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/shape_news_count_background"
-        android:gravity="center"
-        android:textColor="?attr/colorOnSecondary"
-        android:textStyle="bold"
-        tools:text="99+" />
+        android:layout_marginEnd="8dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/text_application_news_count"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_news_count_background"
+                android:gravity="center"
+                android:textColor="?attr/colorOnSecondary"
+                android:textStyle="bold"
+                tools:text="99+" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/image_application_reorder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_baseline_reorder_24"
+            android:contentDescription="可以按住此處拖曳排序" />
+    </ViewSwitcher>
 </LinearLayout>
